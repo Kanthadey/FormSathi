@@ -21,10 +21,10 @@ if (isset($_ENV['VERCEL']) || isset($_SERVER['VERCEL']) || getenv('VERCEL')) {
 
     // Copy bundled bootstrap manifests if they exist
     $bundledCache = __DIR__ . '/../bootstrap/cache';
-    if (file_exists("{$bundledCache}/packages.php") && !file_exists("{$bootstrapCache}/packages.php")) {
+    if (file_exists("{$bundledCache}/packages.php")) {
         copy("{$bundledCache}/packages.php", "{$bootstrapCache}/packages.php");
     }
-    if (file_exists("{$bundledCache}/services.php") && !file_exists("{$bootstrapCache}/services.php")) {
+    if (file_exists("{$bundledCache}/services.php")) {
         copy("{$bundledCache}/services.php", "{$bootstrapCache}/services.php");
     }
 
