@@ -97,6 +97,8 @@ class JobKitTest extends TestCase
         $this->assertStringNotContainsString('01999888777', $sent);
         $this->assertStringNotContainsString('hr@pran.test', $sent);
         $this->assertStringContainsString('Akij Group', $sent);
+        // Work dates survive masking.
+        $this->assertStringContainsString('Jan 2019 to present', $sent);
     }
 
     public function test_contact_details_are_filled_in_locally(): void

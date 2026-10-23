@@ -141,7 +141,7 @@ class JobKitGenerator
                 'education' => sprintf('%s: %s, %s%s%s', $ids[$item->id], $data['degree'], $data['institution'],
                     isset($data['subject']) ? ", {$data['subject']}" : '', isset($data['year']) ? " ({$data['year']}".(isset($data['result']) ? ", {$data['result']}" : '').')' : ''),
                 'work' => sprintf('%s: %s at %s%s, %s to %s. %s', $ids[$item->id], $data['title'], $data['employer'],
-                    isset($data['location']) ? " ({$data['location']})" : '', $data['start'], $data['end'] ?? 'present', $data['description'] ?? ''),
+                    isset($data['location']) ? " ({$data['location']})" : '', $this->month($data['start']), $this->month($data['end'] ?? null), $data['description'] ?? ''),
                 'training' => sprintf('%s: %s%s%s', $ids[$item->id], $data['name'],
                     isset($data['provider']) ? ", {$data['provider']}" : '', isset($data['year']) ? " ({$data['year']})" : ''),
                 'skill' => "Skill: {$data['name']}",
@@ -151,6 +151,15 @@ class JobKitGenerator
         }
 
         return $lines === [] ? 'No career record entered.' : implode("\n", $lines);
+    }
+
+    /**
+     * "2019-01" -> "Jan 2019". Also keeps dates readable after masking,
+     * which would otherwise hide "2019-01" as a six-digit number.
+     */
+    private function month(?string $ym): string
+    {
+        return $ym ? date('M Y', strtotime("{$ym}-01")) : 'present';
     }
 
     /** Drops anything in the reply that does not map back to the user's record. */
