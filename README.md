@@ -19,6 +19,8 @@ composer run dev        # web server, queue worker (for OCR), logs, Vite
 - Payments use a fake bKash checkout locally (`BKASH_DRIVER=fake`).
 - Tests: `php artisan test` (79 tests). The AI, bKash and Tesseract are faked in tests.
 
+**Production:** see [DEPLOY.md](DEPLOY.md). It runs on a VPS (Ubuntu 24.04); serverless hosts like Vercel can't run it.
+
 ## What's built: all 12 MVP features
 
 | PRD | Feature | Where |
