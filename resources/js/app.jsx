@@ -16,6 +16,9 @@ createInertiaApp({
 });
 
 // Keep <html lang> right after switching language, for screen readers and fonts.
-router.on('navigate', (event) => {
+// "success" also covers the language switch, which redirects back to the same page.
+const syncLang = (event) => {
     document.documentElement.lang = event.detail.page.props.locale ?? 'bn';
-});
+};
+router.on('navigate', syncLang);
+router.on('success', syncLang);
