@@ -24,6 +24,7 @@ class Document extends Model
         'expires_at',
         'expiry_reminded_at',
         'ocr_status',
+        'ocr_suggestions',
     ];
 
     protected function casts(): array
@@ -31,6 +32,7 @@ class Document extends Model
         return [
             'title' => VaultEncrypted::class,
             'original_name' => VaultEncrypted::class,
+            'ocr_suggestions' => VaultEncrypted::class,
             'expires_at' => 'date',
             'expiry_reminded_at' => 'datetime',
         ];

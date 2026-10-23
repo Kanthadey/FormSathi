@@ -15,7 +15,10 @@ export default function Index({ templates, applications }) {
 
             {errors.form && (
                 <Alert tone="danger" className="mb-5">
-                    {errors.form}
+                    <p>{errors.form}</p>
+                    <Link href="/plans" className="font-medium underline">
+                        {t('getMore')}
+                    </Link>
                 </Alert>
             )}
 
@@ -35,7 +38,22 @@ export default function Index({ templates, applications }) {
                         </Card>
                     </li>
                 ))}
+                <li>
+                    <Card className="flex items-center gap-4">
+                        <span className="inline-flex size-12 shrink-0 items-center justify-center rounded-xl bg-brand-soft text-brand">
+                            <Icon name="papers" className="size-6" />
+                        </span>
+                        <span className="min-w-0 flex-1 text-lg font-semibold">{t('jobsTitle')}</span>
+                        <Button href="/jobs">{t('open')}</Button>
+                    </Card>
+                </li>
             </ul>
+
+            <p className="mb-8">
+                <Link href="/assistant" className="font-medium text-brand underline">
+                    {t('assistantTitle')}
+                </Link>
+            </p>
 
             {applications.length > 0 && (
                 <section>

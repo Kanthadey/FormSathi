@@ -1,4 +1,4 @@
-import { router, useForm } from '@inertiajs/react';
+import { Link, router, useForm } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import Icon from '../../Components/Icon';
 import Layout from '../../Components/Layout';
@@ -224,6 +224,14 @@ export default function Index({ fields, completeness, types }) {
                 </div>
                 <span className="font-semibold">{n(completeness)}%</span>
             </div>
+
+            <Link href="/career" className="mb-6 flex items-center justify-between gap-3 rounded-2xl border border-line bg-card p-4 hover:border-brand">
+                <span>
+                    <span className="block font-semibold">{t('careerTitle')}</span>
+                    <span className="text-sm text-muted">{t('jobsTitle')}</span>
+                </span>
+                <Icon name="arrow" className="size-5 text-brand" />
+            </Link>
 
             {sections.map((section) => (
                 <section key={section.title} className="mb-6">

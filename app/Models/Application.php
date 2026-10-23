@@ -15,10 +15,12 @@ class Application extends Model
         'copied',
         'summary',
         'completed_at',
+        'funded_by',
     ];
 
     protected $attributes = [
         'status' => 'draft',
+        'funded_by' => 'free',
     ];
 
     protected function casts(): array

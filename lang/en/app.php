@@ -19,4 +19,13 @@ return [
     'form_limit' => 'The free plan includes :max form assists a month.',
     'application_completed' => 'Marked as submitted. The details stay in your wallet.',
     'application_deleted' => 'Application record deleted.',
+    'payment_unavailable' => 'bKash payment cannot start right now. Please try again shortly.',
+    'payment_success' => 'Payment successful. Your plan is active.',
+    'payment_failed' => 'The payment did not go through. If money was taken, contact the helpline with the TrxID.',
+    'ai_unavailable' => 'The AI service is not available right now. Please try again shortly — no form assist was used.',
+    'assistant_found' => 'OK — opening :name. Tap the button below.',
+    'assistant_unclear' => 'I didn’t quite understand. Which of these do you want?',
+    'ticket_sent' => 'Your message has been sent. We will reply soon.',
+    'ticket_field_sent' => 'Thank you! The wrong field has been reported to our team.',
+    'ticket_field_context' => 'Field on the site: :site',
 ];

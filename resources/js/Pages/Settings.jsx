@@ -1,4 +1,4 @@
-import { router, useForm, usePage } from '@inertiajs/react';
+import { Link, router, useForm, usePage } from '@inertiajs/react';
 import { useState } from 'react';
 import Icon from '../Components/Icon';
 import Layout from '../Components/Layout';
@@ -33,6 +33,24 @@ export default function Settings() {
                     ))}
                 </div>
             </Card>
+
+            <nav className="mb-4 divide-y divide-line overflow-hidden rounded-2xl border border-line bg-card" aria-label={t('more')}>
+                {[
+                    ['/plans', 'plansTitle', auth.user.premium ? t('planPremium') : t('planFree')],
+                    ['/career', 'careerTitle'],
+                    ['/help', 'helpTitle'],
+                    ['/privacy', 'privacyTitle'],
+                    ['/terms', 'termsTitle'],
+                ].map(([href, label, note]) => (
+                    <Link key={href} href={href} className="flex items-center justify-between gap-3 px-5 py-4 hover:bg-surface">
+                        <span className="font-medium">{t(label)}</span>
+                        <span className="flex items-center gap-2 text-muted">
+                            {note}
+                            <Icon name="arrow" className="size-5" />
+                        </span>
+                    </Link>
+                ))}
+            </nav>
 
             <Card className="mb-4">
                 <h2 className="mb-1 text-lg font-semibold">{t('account')}</h2>

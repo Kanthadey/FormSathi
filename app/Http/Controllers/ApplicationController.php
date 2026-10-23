@@ -5,12 +5,12 @@ namespace App\Http\Controllers;
 use App\Models\AccessLog;
 use App\Models\Application;
 use App\Models\FormTemplate;
+use App\Services\Entitlements;
 use App\Services\FormFiller;
-use App\Support\Bangla;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
-use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -20,7 +20,10 @@ use Inertia\Response;
  */
 class ApplicationController extends Controller
 {
-    public function __construct(private readonly FormFiller $filler) {}
+    public function __construct(
+        private readonly FormFiller $filler,
+        private readonly Entitlements $entitlements,
+    ) {}
 
     public function index(Request $request): Response
     {
@@ -56,13 +59,10 @@ class ApplicationController extends Controller
             return redirect()->route('applications.show', $draft);
         }
 
-        $limit = config('formsathi.free_plan.form_assists_per_month');
-
-        if ($user->plan === 'free' && $user->applications()->where('created_at', '>=', now()->startOfMonth())->count() >= $limit) {
-            throw ValidationException::withMessages(['form' => __('app.form_limit', ['max' => Bangla::localDigits($limit)])]);
-        }
-
-        $application = $user->applications()->create(['form_template_id' => $template->id]);
+        $application = DB::transaction(fn () => $user->applications()->create([
+            'form_template_id' => $template->id,
+            'funded_by' => $this->entitlements->useAssist($user),
+        ]));
         AccessLog::record($user, 'application.start', $application);
 
         return redirect()->route('applications.show', $application);

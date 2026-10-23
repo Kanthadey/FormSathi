@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureAdmin;
 use App\Http\Middleware\HandleInertiaRequests;
 use App\Http\Middleware\IdleLock;
 use App\Http\Middleware\SetLocale;
@@ -21,6 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'idle.lock' => IdleLock::class,
+            'admin' => EnsureAdmin::class,
         ]);
 
         $middleware->redirectGuestsTo(fn () => route('login'));

@@ -47,6 +47,61 @@ return [
         'form_assists_per_month' => 3,
     ],
 
+    'premium_plan' => [
+        'max_documents' => 100,
+    ],
+
+    // Prices in whole taka (PRD: proposals to test with users before launch).
+    'products' => [
+        'form_pack' => ['bn' => 'ফর্ম প্যাক', 'en' => 'Form pack', 'amount' => 99, 'credits' => 1],
+        'premium_month' => ['bn' => 'প্রিমিয়াম (১ মাস)', 'en' => 'Premium (1 month)', 'amount' => 199, 'months' => 1],
+        'premium_year' => ['bn' => 'প্রিমিয়াম (১ বছর)', 'en' => 'Premium (1 year)', 'amount' => 999, 'months' => 12],
+    ],
+
+    /*
+    | Career record for the job kit (F10). Each kind lists its fields; the
+    | first field is the one shown as the item's title.
+    */
+    'career' => [
+        'education' => ['bn' => 'শিক্ষা', 'en' => 'Education', 'fields' => [
+            'degree' => ['bn' => 'ডিগ্রি / পরীক্ষা', 'en' => 'Degree / exam', 'type' => 'text', 'required' => true],
+            'institution' => ['bn' => 'প্রতিষ্ঠান', 'en' => 'Institution', 'type' => 'text', 'required' => true],
+            'subject' => ['bn' => 'বিষয় / বিভাগ', 'en' => 'Subject / group', 'type' => 'text'],
+            'year' => ['bn' => 'পাসের সাল', 'en' => 'Year passed', 'type' => 'number'],
+            'result' => ['bn' => 'ফলাফল', 'en' => 'Result', 'type' => 'text'],
+        ]],
+        'work' => ['bn' => 'কাজের অভিজ্ঞতা', 'en' => 'Work experience', 'fields' => [
+            'title' => ['bn' => 'পদবি', 'en' => 'Job title', 'type' => 'text', 'required' => true],
+            'employer' => ['bn' => 'প্রতিষ্ঠান', 'en' => 'Employer', 'type' => 'text', 'required' => true],
+            'location' => ['bn' => 'স্থান', 'en' => 'Location', 'type' => 'text'],
+            'start' => ['bn' => 'শুরু', 'en' => 'Start', 'type' => 'month', 'required' => true],
+            'end' => ['bn' => 'শেষ (চলমান হলে খালি)', 'en' => 'End (blank if current)', 'type' => 'month'],
+            'description' => ['bn' => 'কী কাজ করেছেন', 'en' => 'What you did', 'type' => 'textarea'],
+        ]],
+        'skill' => ['bn' => 'দক্ষতা', 'en' => 'Skills', 'fields' => [
+            'name' => ['bn' => 'দক্ষতা', 'en' => 'Skill', 'type' => 'text', 'required' => true],
+        ]],
+        'language' => ['bn' => 'ভাষা', 'en' => 'Languages', 'fields' => [
+            'name' => ['bn' => 'ভাষা', 'en' => 'Language', 'type' => 'text', 'required' => true],
+            'level' => ['bn' => 'দক্ষতার মাত্রা', 'en' => 'Level', 'type' => 'select', 'options' => [
+                'native' => ['bn' => 'মাতৃভাষা', 'en' => 'Native'],
+                'fluent' => ['bn' => 'সাবলীল', 'en' => 'Fluent'],
+                'good' => ['bn' => 'ভালো', 'en' => 'Good'],
+                'basic' => ['bn' => 'প্রাথমিক', 'en' => 'Basic'],
+            ]],
+        ]],
+        'training' => ['bn' => 'প্রশিক্ষণ', 'en' => 'Training', 'fields' => [
+            'name' => ['bn' => 'প্রশিক্ষণের নাম', 'en' => 'Training', 'type' => 'text', 'required' => true],
+            'provider' => ['bn' => 'প্রতিষ্ঠান', 'en' => 'Provider', 'type' => 'text'],
+            'year' => ['bn' => 'সাল', 'en' => 'Year', 'type' => 'number'],
+        ]],
+    ],
+
+    'ocr' => [
+        'tesseract' => env('TESSERACT_PATH', 'tesseract'),
+        'languages' => 'ben+eng',
+    ],
+
     'categories' => [
         'identity' => ['bn' => 'পরিচয়', 'en' => 'Identity'],
         'education' => ['bn' => 'শিক্ষা', 'en' => 'Education'],

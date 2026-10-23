@@ -3,26 +3,8 @@ import { useState } from 'react';
 import Icon from '../../Components/Icon';
 import Layout from '../../Components/Layout';
 import { Alert, Button } from '../../Components/ui';
+import { copyText } from '../../lib/clipboard';
 import { useT } from '../../lib/i18n';
-
-/** Clipboard API first; the textarea fallback covers older Android browsers. */
-async function copyText(text) {
-    try {
-        await navigator.clipboard.writeText(text);
-        return true;
-    } catch {
-        const area = document.createElement('textarea');
-        area.value = text;
-        area.setAttribute('readonly', '');
-        area.style.position = 'fixed';
-        area.style.opacity = '0';
-        document.body.appendChild(area);
-        area.select();
-        const ok = document.execCommand('copy');
-        area.remove();
-        return ok;
-    }
-}
 
 function FieldCard({ field, number, applicationId, completed }) {
     const { t, n, locale } = useT();
@@ -107,6 +89,21 @@ function FieldCard({ field, number, applicationId, completed }) {
             )}
 
             {field.help && <p className="mt-2 text-sm text-muted">{field.help[locale]}</p>}
+
+            {!completed && (
+                <button
+                    type="button"
+                    className="mt-2 text-xs text-muted underline"
+                    onClick={() => {
+                        const note = window.prompt(t('reportWrongPrompt'));
+                        if (note !== null) {
+                            router.post(`/applications/${applicationId}/report`, { key: field.key, note }, { preserveScroll: true });
+                        }
+                    }}
+                >
+                    {t('reportWrong')}
+                </button>
+            )}
         </li>
     );
 }

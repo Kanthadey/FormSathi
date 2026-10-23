@@ -3,6 +3,7 @@ import Icon from '../Components/Icon';
 import Layout from '../Components/Layout';
 import { Button, Card } from '../Components/ui';
 import { useT } from '../lib/i18n';
+import { AskBox } from './Assistant';
 
 function NextStep({ documentCount, needsReview, completeness }) {
     const { t } = useT();
@@ -50,6 +51,14 @@ export default function Dashboard({ completeness, documentCount, needsReview, ex
     return (
         <Layout title={t('navHome')}>
             <h1 className="mb-5 text-2xl font-semibold">{t('hello')}</h1>
+
+            <section className="mb-5" aria-labelledby="ask-heading">
+                <h2 id="ask-heading" className="mb-2 font-medium">
+                    {t('assistantTitle')}
+                </h2>
+                <AskBox />
+                <p className="mt-1.5 text-sm text-muted">{t('assistantHint')}</p>
+            </section>
 
             <div className="mb-5 grid grid-cols-2 gap-3">
                 <Card>

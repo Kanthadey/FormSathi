@@ -48,7 +48,7 @@ export function FieldError({ message, id }) {
     );
 }
 
-export function TextField({ label, error, hint, id, as = 'input', className = '', ...props }) {
+export function TextField({ label, error, hint, id, as = 'input', className = '', children, ...props }) {
     const Tag = as;
     const describedBy = [error && `${id}-error`, hint && `${id}-hint`].filter(Boolean).join(' ') || undefined;
 
@@ -65,7 +65,10 @@ export function TextField({ label, error, hint, id, as = 'input', className = ''
                     error ? 'border-danger' : 'border-line'
                 }`}
                 {...props}
-            />
+            >
+                {/* <input> may not have children at all, not even `false`. */}
+                {Tag === 'select' ? children : undefined}
+            </Tag>
             {hint && (
                 <p id={`${id}-hint`} className="mt-1.5 text-sm text-muted">
                     {hint}

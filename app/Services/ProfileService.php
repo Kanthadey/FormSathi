@@ -53,7 +53,8 @@ class ProfileService
                 ]);
             }
 
-            $document->update(['ocr_status' => 'confirmed']);
+            // Saved by the user, so the OCR suggestions are spent.
+            $document->update(['ocr_status' => 'confirmed', 'ocr_suggestions' => null]);
         });
     }
 

@@ -30,13 +30,15 @@ class HandleInertiaRequests extends Middleware
             'auth' => [
                 'user' => $user ? [
                     'mobile' => Bangla::maskMobile($user->mobile),
-                    'plan' => $user->plan,
+                    'premium' => $user->isPremium(),
+                    'isAdmin' => $user->is_admin,
                 ] : null,
             ],
             'company' => config('formsathi.company'),
             'idleLockMinutes' => config('formsathi.pin.idle_lock_minutes'),
             'flash' => [
                 'status' => fn () => $request->session()->get('status'),
+                'error' => fn () => $request->session()->get('error'),
                 // Only ever set in the local environment.
                 'devOtp' => fn () => $request->session()->get('dev_otp'),
             ],

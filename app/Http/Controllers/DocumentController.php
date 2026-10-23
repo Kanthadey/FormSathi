@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\ReadDocument;
 use App\Models\AccessLog;
 use App\Models\Document;
+use App\Services\Entitlements;
 use App\Services\ProfileService;
 use App\Support\Bangla;
 use App\Support\PinGate;
@@ -42,7 +44,7 @@ class DocumentController extends Controller
         ]);
     }
 
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request, Entitlements $entitlements): RedirectResponse
     {
         $user = $request->user();
         $types = config('formsathi.document_types');
@@ -54,9 +56,9 @@ class DocumentController extends Controller
             'file' => ['required', 'file', 'mimes:'.implode(',', config('formsathi.uploads.mimes')), 'max:'.config('formsathi.uploads.max_kb')],
         ]);
 
-        $limit = config('formsathi.free_plan.max_documents');
+        $limit = $entitlements->documentLimit($user);
 
-        if ($user->plan === 'free' && $user->documents()->count() >= $limit) {
+        if ($user->documents()->count() >= $limit) {
             throw ValidationException::withMessages(['file' => __('app.document_limit', ['max' => Bangla::localDigits($limit)])]);
         }
 
@@ -79,6 +81,12 @@ class DocumentController extends Controller
 
         AccessLog::record($user, 'document.upload', $document);
 
+        // F4: read the paper in the background; results wait for the user to confirm.
+        if (ReadDocument::canRead($document)) {
+            $document->update(['ocr_status' => 'pending']);
+            ReadDocument::dispatch($document->id);
+        }
+
         return redirect()->route('documents.show', $document)->with('status', __('app.document_saved'));
     }
 
@@ -86,6 +94,7 @@ class DocumentController extends Controller
     {
         $document = $request->user()->documents()->with('fields')->findOrFail($id);
         $values = $document->fields->pluck('value', 'key');
+        $suggestions = json_decode($document->ocr_suggestions ?? '[]', true);
 
         return Inertia::render('Documents/Show', [
             'document' => $this->summary($document),
@@ -93,7 +102,10 @@ class DocumentController extends Controller
                 'key' => $key,
                 'label' => config("formsathi.fields.{$key}"),
                 'value' => $values->get($key, ''),
+                // Read by OCR and not yet confirmed: shown pre-filled with a "check this" note.
+                'suggestion' => $values->has($key) ? null : ($suggestions[$key] ?? null),
             ]),
+            'ocrStatus' => $document->ocr_status,
             'canView' => PinGate::isFresh($request),
             'types' => config('formsathi.document_types'),
         ]);

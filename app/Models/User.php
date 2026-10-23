@@ -33,6 +33,9 @@ class User extends Authenticatable
         'plan' => 'free',
         'locale' => 'bn',
         'pin_failed_attempts' => 0,
+        'form_credits' => 0,
+        'is_admin' => false,
+        'premium_until' => null,
     ];
 
     /**
@@ -63,7 +66,14 @@ class User extends Authenticatable
         return [
             'pin' => 'hashed',
             'pin_locked_until' => 'datetime',
+            'premium_until' => 'datetime',
+            'is_admin' => 'boolean',
         ];
+    }
+
+    public function isPremium(): bool
+    {
+        return $this->premium_until?->isFuture() ?? false;
     }
 
     public function getAuthPasswordName(): string
@@ -99,6 +109,26 @@ class User extends Authenticatable
     public function applications(): HasMany
     {
         return $this->hasMany(Application::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function careerItems(): HasMany
+    {
+        return $this->hasMany(CareerItem::class)->orderBy('position')->orderBy('id');
+    }
+
+    public function jobKits(): HasMany
+    {
+        return $this->hasMany(JobKit::class);
+    }
+
+    public function tickets(): HasMany
+    {
+        return $this->hasMany(Ticket::class);
     }
 
     public function accessLogs(): HasMany

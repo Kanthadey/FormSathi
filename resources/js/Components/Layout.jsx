@@ -7,12 +7,12 @@ import { Alert } from './ui';
 const nav = [
     { href: '/dashboard', label: 'navHome', icon: 'home' },
     { href: '/documents', label: 'navPapers', icon: 'papers' },
-    { href: '/forms', label: 'navForms', icon: 'form', also: '/applications' },
-    { href: '/profile', label: 'navProfile', icon: 'user' },
-    { href: '/settings', label: 'navSettings', icon: 'settings' },
+    { href: '/forms', label: 'navForms', icon: 'form', also: ['/applications', '/jobs', '/assistant'] },
+    { href: '/profile', label: 'navProfile', icon: 'user', also: ['/career'] },
+    { href: '/settings', label: 'navSettings', icon: 'settings', also: ['/plans', '/help'] },
 ];
 
-const isActive = (url, item) => url.startsWith(item.href) || (item.also && url.startsWith(item.also));
+const isActive = (url, item) => url.startsWith(item.href) || (item.also ?? []).some((path) => url.startsWith(path));
 
 function LanguageToggle() {
     const { t, locale } = useT();
@@ -27,11 +27,17 @@ function LanguageToggle() {
     );
 }
 
-function Footer() {
+function Footer({ className = 'pb-28 sm:pb-10' }) {
     const { company } = usePage().props;
     const { t } = useT();
     return (
-        <footer className="mx-auto max-w-2xl px-4 pt-8 pb-28 text-sm text-muted sm:pb-10">
+        <footer className={`mx-auto max-w-2xl px-4 pt-8 text-sm text-muted ${className}`}>
+            <nav className="mb-3 flex flex-wrap gap-x-4 gap-y-1" aria-label="Footer">
+                <Link href="/pricing" className="underline">{t('pricingTitle')}</Link>
+                <Link href="/privacy" className="underline">{t('privacyTitle')}</Link>
+                <Link href="/terms" className="underline">{t('termsTitle')}</Link>
+                <Link href="/help" className="underline">{t('navHelp')}</Link>
+            </nav>
             <p className="mb-2">{t('notGovt')}</p>
             <p>
                 {company.name} · {company.address} · {t('helpline')}:{' '}
@@ -88,6 +94,11 @@ export default function Layout({ title, children }) {
                         ))}
                     </nav>
                     <div className="flex items-center gap-1">
+                        {props.auth.user?.isAdmin && (
+                            <Link href="/admin" className="rounded-lg px-2 py-1.5 text-sm font-medium text-warn hover:bg-warn-soft">
+                                Admin
+                            </Link>
+                        )}
                         <LanguageToggle />
                         <button
                             type="button"
@@ -105,6 +116,11 @@ export default function Layout({ title, children }) {
                 {props.flash.status && (
                     <Alert tone="success" className="mb-5">
                         {props.flash.status}
+                    </Alert>
+                )}
+                {props.flash.error && (
+                    <Alert tone="danger" className="mb-5">
+                        {props.flash.error}
                     </Alert>
                 )}
                 {children}
@@ -150,6 +166,39 @@ export function AuthLayout({ title, children }) {
                 <main className="flex-1 pt-6">{children}</main>
                 <p className="py-6 text-sm text-muted">{t('notGovt')}</p>
             </div>
+        </>
+    );
+}
+
+/** Pages anyone can read: landing, pricing, privacy, terms. */
+export function PublicLayout({ title, children, wide = false }) {
+    const { t } = useT();
+    const { auth } = usePage().props;
+
+    return (
+        <>
+            <Head title={title} />
+            <header className="border-b border-line bg-surface">
+                <div className={`mx-auto flex items-center justify-between gap-2 px-4 py-3 ${wide ? 'max-w-5xl' : 'max-w-2xl'}`}>
+                    <Link href="/" className="text-xl font-semibold text-brand">
+                        {t('appName')}
+                    </Link>
+                    <div className="flex items-center gap-1">
+                        <Link href="/pricing" className="hidden rounded-lg px-3 py-1.5 font-medium text-muted hover:text-ink sm:inline-block">
+                            {t('pricingTitle')}
+                        </Link>
+                        <LanguageToggle />
+                        <Link
+                            href={auth.user ? '/dashboard' : '/login'}
+                            className="rounded-lg bg-brand px-3 py-1.5 text-sm font-semibold text-white hover:bg-brand-strong"
+                        >
+                            {auth.user ? t('navHome') : t('login')}
+                        </Link>
+                    </div>
+                </div>
+            </header>
+            <main className={wide ? '' : 'mx-auto max-w-2xl px-4 pt-6'}>{children}</main>
+            <Footer className="pb-10" />
         </>
     );
 }
