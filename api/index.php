@@ -8,6 +8,32 @@ if (isset($_ENV['VERCEL']) || isset($_SERVER['VERCEL']) || getenv('VERCEL')) {
     $_ENV['LARAVEL_STORAGE_PATH'] = $storagePath;
     $_SERVER['LARAVEL_STORAGE_PATH'] = $storagePath;
 
+    // Direct bootstrap cache to writable /tmp
+    $bootstrapCache = '/tmp/bootstrap/cache';
+    if (!is_dir($bootstrapCache)) {
+        mkdir($bootstrapCache, 0755, true);
+    }
+
+    // Copy bundled bootstrap manifests if they exist
+    $bundledCache = __DIR__ . '/../bootstrap/cache';
+    if (file_exists("{$bundledCache}/packages.php") && !file_exists("{$bootstrapCache}/packages.php")) {
+        copy("{$bundledCache}/packages.php", "{$bootstrapCache}/packages.php");
+    }
+    if (file_exists("{$bundledCache}/services.php") && !file_exists("{$bootstrapCache}/services.php")) {
+        copy("{$bundledCache}/services.php", "{$bootstrapCache}/services.php");
+    }
+
+    putenv("APP_PACKAGES_CACHE={$bootstrapCache}/packages.php");
+    putenv("APP_SERVICES_CACHE={$bootstrapCache}/services.php");
+    putenv("APP_CONFIG_CACHE={$bootstrapCache}/config.php");
+    putenv("APP_ROUTES_CACHE={$bootstrapCache}/routes.php");
+    putenv("APP_EVENTS_CACHE={$bootstrapCache}/events.php");
+
+    $_ENV['APP_PACKAGES_CACHE'] = "{$bootstrapCache}/packages.php";
+    $_ENV['APP_SERVICES_CACHE'] = "{$bootstrapCache}/services.php";
+    $_SERVER['APP_PACKAGES_CACHE'] = "{$bootstrapCache}/packages.php";
+    $_SERVER['APP_SERVICES_CACHE'] = "{$bootstrapCache}/services.php";
+
     // Required storage subdirectories
     $subDirs = [
         "{$storagePath}/framework/views",
@@ -48,13 +74,6 @@ if (isset($_ENV['VERCEL']) || isset($_SERVER['VERCEL']) || getenv('VERCEL')) {
     putenv("VIEW_COMPILED_PATH={$storagePath}/framework/views");
     $_ENV['VIEW_COMPILED_PATH'] = "{$storagePath}/framework/views";
     $_SERVER['VIEW_COMPILED_PATH'] = "{$storagePath}/framework/views";
-
-    // Enable debug mode for diagnostics if not explicitly disabled
-    if (empty($_ENV['APP_DEBUG']) && !getenv('APP_DEBUG')) {
-        putenv('APP_DEBUG=true');
-        $_ENV['APP_DEBUG'] = 'true';
-        $_SERVER['APP_DEBUG'] = 'true';
-    }
 }
 
 // Forward to public/index.php with exception catching
