@@ -1,5 +1,10 @@
 <?php
 
+// Register Composer autoloader early so class_exists checks work
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require_once __DIR__ . '/../vendor/autoload.php';
+}
+
 // Vercel serverless entry point for Laravel
 if (isset($_ENV['VERCEL']) || isset($_SERVER['VERCEL']) || getenv('VERCEL')) {
     // Direct storage to writable /tmp
@@ -21,6 +26,33 @@ if (isset($_ENV['VERCEL']) || isset($_SERVER['VERCEL']) || getenv('VERCEL')) {
     }
     if (file_exists("{$bundledCache}/services.php") && !file_exists("{$bootstrapCache}/services.php")) {
         copy("{$bundledCache}/services.php", "{$bootstrapCache}/services.php");
+    }
+
+    // Filter out dev-only providers (e.g. Pail, Sail) that aren't installed in production
+    if (file_exists("{$bootstrapCache}/services.php")) {
+        $services = require "{$bootstrapCache}/services.php";
+        if (isset($services['providers']) && is_array($services['providers'])) {
+            $services['providers'] = array_values(array_filter($services['providers'], fn($p) => class_exists($p)));
+        }
+        if (isset($services['eager']) && is_array($services['eager'])) {
+            $services['eager'] = array_values(array_filter($services['eager'], fn($p) => class_exists($p)));
+        }
+        file_put_contents("{$bootstrapCache}/services.php", '<?php return ' . var_export($services, true) . ';');
+    }
+
+    if (file_exists("{$bootstrapCache}/packages.php")) {
+        $packages = require "{$bootstrapCache}/packages.php";
+        if (is_array($packages)) {
+            foreach ($packages as $pkg => $cfg) {
+                if (isset($cfg['providers']) && is_array($cfg['providers'])) {
+                    $packages[$pkg]['providers'] = array_values(array_filter($cfg['providers'], fn($p) => class_exists($p)));
+                    if (empty($packages[$pkg]['providers'])) {
+                        unset($packages[$pkg]);
+                    }
+                }
+            }
+            file_put_contents("{$bootstrapCache}/packages.php", '<?php return ' . var_export($packages, true) . ';');
+        }
     }
 
     putenv("APP_PACKAGES_CACHE={$bootstrapCache}/packages.php");
@@ -88,13 +120,6 @@ if (isset($_ENV['VERCEL']) || isset($_SERVER['VERCEL']) || getenv('VERCEL')) {
     putenv("VIEW_COMPILED_PATH={$storagePath}/framework/views");
     $_ENV['VIEW_COMPILED_PATH'] = "{$storagePath}/framework/views";
     $_SERVER['VIEW_COMPILED_PATH'] = "{$storagePath}/framework/views";
-
-    // Debug mode
-    if (empty($_ENV['APP_DEBUG']) && !getenv('APP_DEBUG')) {
-        putenv('APP_DEBUG=true');
-        $_ENV['APP_DEBUG'] = 'true';
-        $_SERVER['APP_DEBUG'] = 'true';
-    }
 }
 
 // Forward to public/index.php
