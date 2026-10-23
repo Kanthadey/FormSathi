@@ -1,0 +1,49 @@
+@import 'tailwindcss';
+@import '@fontsource/hind-siliguri/400.css';
+@import '@fontsource/hind-siliguri/500.css';
+@import '@fontsource/hind-siliguri/600.css';
+
+@source '../**/*.blade.php';
+@source '../**/*.jsx';
+
+/*
+ * Calm, trustworthy, and deliberately not government green-and-red:
+ * the site must never look like an official service.
+ */
+@theme {
+    --font-sans: 'Hind Siliguri', 'Noto Sans Bengali', ui-sans-serif, system-ui, sans-serif;
+
+    --color-ink: #1c2321;
+    --color-muted: #5b6662;
+    --color-line: #dfe3e0;
+    --color-surface: #f6f5f1;
+    --color-card: #ffffff;
+
+    --color-brand: #0f6e62;
+    --color-brand-strong: #0a5148;
+    --color-brand-soft: #e3f1ee;
+
+    --color-danger: #b42318;
+    --color-danger-soft: #fdecea;
+    --color-warn: #8a4b06;
+    --color-warn-soft: #fdf3e1;
+    --color-ok: #146c2e;
+    --color-ok-soft: #e7f5ea;
+}
+
+@layer base {
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+
+    body {
+        @apply bg-surface text-ink font-sans antialiased;
+        font-size: 17px;
+        line-height: 1.6;
+    }
+
+    :focus-visible {
+        outline: 3px solid var(--color-brand);
+        outline-offset: 2px;
+    }
+}
