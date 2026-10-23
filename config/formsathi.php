@@ -13,6 +13,14 @@
 
 return [
 
+    /*
+    | Proxies in front of the server (Cloudflare, a load balancer), as a
+    | comma-separated list of IPs/CIDRs, or "*" for any. Leave empty when
+    | Nginx faces the internet directly. Without this behind a proxy, every
+    | visitor looks like the proxy: rate limits and access logs break.
+    */
+    'trusted_proxies' => env('TRUSTED_PROXIES'),
+
     'company' => [
         'name' => env('COMPANY_NAME', 'FormSathi'),
         'address' => env('COMPANY_ADDRESS', 'Dhaka, Bangladesh'),

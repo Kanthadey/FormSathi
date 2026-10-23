@@ -1,0 +1,9 @@
+[Unit]
+Description=FormSathi nightly backup
+After=postgresql.service
+
+[Service]
+Type=oneshot
+User=formsathi
+Group=www-data
+ExecStart=/bin/bash /var/www/formsathi/current/deploy/backup.sh

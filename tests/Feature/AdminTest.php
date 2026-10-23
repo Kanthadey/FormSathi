@@ -79,6 +79,18 @@ class AdminTest extends TestCase
         $this->assertNotNull($v2->fresh()->verified_at);
     }
 
+    public function test_redeploying_keeps_staff_checks_and_edits(): void
+    {
+        $template = FormTemplate::first();
+        $this->as($this->admin)->post("/admin/templates/{$template->id}/verify");
+
+        // deploy.sh re-runs the seeder on every release.
+        $this->seed(FormTemplateSeeder::class);
+
+        $this->assertNotNull($template->fresh()->verified_at);
+        $this->assertSame(1, FormTemplate::count());
+    }
+
     public function test_broken_templates_are_refused(): void
     {
         $v1 = FormTemplate::first();
